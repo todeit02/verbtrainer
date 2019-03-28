@@ -2,7 +2,7 @@
   "name": "romanian_verbs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
     "debug": "node --inspect server/server.js"
