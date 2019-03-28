@@ -1,0 +1,22 @@
+{
+  "name": "romanian_verbs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "debug": "node --inspect server/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "jsdom": "^14.0.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "curl": "^0.1.4",
+    "grunt": "^1.0.3"
+  }
+}
