@@ -18,18 +18,34 @@ app.get("^/verb/:verb([^/]+)", (req, res) =>
 
 app.get("^/randomword/percentile/:percentile([0-9]{1,3})", (req, res) =>
 {
-    const randomWord = WordFrequency.getRandomWordByPercentile(Number(req.params.percentile));
+    const randomWordIterator = (function *()
+    {
+        try
+        {
+            let result;
+            do
+            {
+                result = yield getResult();
+                console.log("yielded:", result);
+            } while (!result);
 
-    Dictionary.getConjugation(Dexonline.searchUrlPattern, randomWord, Dexonline.scrapeConjugation)
-    .then(result => 
+            res.send(result);
+        }
+        catch (error)
+        {
+            res.send("An error occured ... :(");
+            console.error(error);
+        }
+    })();
+
+    const getResult = () =>
     {
-        res.send(result);
-    })
-    .catch(error =>
-    {
-        console.error(error);
-        res.send("An error occured ... :(");
-    });
+        const randomWord = WordFrequency.getRandomWordByPercentile(Number(req.params.percentile));    
+        Dictionary.getConjugation(Dexonline.searchUrlPattern, randomWord, Dexonline.scrapeConjugation)
+        .then(result => randomWordIterator.next(result));        
+    }    
+
+    randomWordIterator.next();
 });
 
 app.listen(port, () => console.log("Server listening on port " + port));

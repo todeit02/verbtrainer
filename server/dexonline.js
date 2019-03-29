@@ -70,7 +70,7 @@ function scrapeImpersonalConjugationParameters(conjugationVerbCellIndices)
 
     if(conjugationVerbCellIndices.x === 0) conjugationParameters.form = "infinitiv";
     else if(conjugationVerbCellIndices.x === 1) conjugationParameters.form = "infinitiv lung";
-    else if(conjugationVerbCellIndices.x === 2) conjugationParameters.form = "participu";
+    else if(conjugationVerbCellIndices.x === 2) conjugationParameters.form = "participiu";
     else if(conjugationVerbCellIndices.x === 3) conjugationParameters.form = "gerunziu";
 
     return conjugationParameters;
