@@ -23,12 +23,14 @@ app.get("^/randomword/percentile/:percentile([0-9]{1,3})", (req, res) =>
         try
         {
             let result;
+            let allowedTrials = 20;
             do
             {
                 result = yield getResult();
-                console.log("yielded:", result);
-            } while (!result);
+                allowedTrials--;
+            } while (!result && allowedTrials);
 
+            if(!result) throw "Verb fetching timed out.";
             res.send(result);
         }
         catch (error)
