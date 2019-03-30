@@ -1,5 +1,6 @@
 "use strict";
 const express       = require('express');
+const path          = require('path');
 const WordFrequency = require('./word_frequency');
 const Dictionary    = require('./dictionary');
 const Dexonline     = require('./dexonline');
@@ -8,8 +9,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 WordFrequency.loadWordFrequencyTable();
-
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/../client/public"));
 
 app.get("^/verb/:verb([^/]+)", (req, res) =>
 {

@@ -1,0 +1,134 @@
+body
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    font-family: Ebrima, sans-serif;
+    font-size: 2em;
+}
+
+
+button
+{
+    font-size: inherit;
+    font-family: inherit;
+    background-color: #ffd997;
+}
+
+
+.counter
+{
+    font-size: 3em;
+    font-family: "Comic Sans MS";
+    font-weight: bold;
+    text-align: center;
+    align-self: center;
+}
+
+
+.exercise
+{
+    display: none;
+    text-align: center;
+}
+
+
+.answer
+{
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+
+#mainContainer
+{
+    width: 80%;
+}
+
+
+#header
+{
+    height: 2em;
+    display: flex;
+    text-align: center;
+    font-weight: bold;
+    border-top: 1px solid #ffbe08;
+    border-bottom: 1px solid #ffbe08;
+    background-color: #fff2e1;
+}
+
+
+#header > *
+{
+    align-self: center;
+}
+
+
+#header > p
+{
+    flex-grow: 1;
+}
+
+
+#header > img
+{
+    height: 150%;
+}
+
+
+#gameContainer
+{
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 50% 50%;
+    grid-template-areas: 
+        "passedCount exercise failedCount"
+        ". buttonContainer .";
+}
+
+
+#passedCount
+{
+    grid-area: passedCount;
+    color: green;
+    text-shadow: 0.05em 0.05em #9efc81;;
+}
+
+
+#failedCount
+{
+    grid-area: failedCount;
+    color: red;
+    text-shadow: 0.05em 0.05em #ff8787;
+}
+
+
+#loadExerciseSpinner
+{
+    grid-area: exercise;
+    text-align: center;
+    align-self: center;
+}
+
+
+#buttonContainer
+{
+    grid-area: buttonContainer;
+}
+
+
+#buttonContainer > *
+{
+    width: 100%;
+    margin: 0.1em 0;
+}
+
+
+@font-face
+{
+    font-family: Ebrima;
+    src: url(ebrima.ttf);
+}

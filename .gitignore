@@ -1,1 +1,5 @@
+# node modules should be installed
 node_modules
+
+# dist folder will be built from source (/)
+dist

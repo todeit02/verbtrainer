@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="style/style.css" type="text/css">
+        <title>Învață verbe românești</title>
+    </head>
+    <body>        
+        <div id="mainContainer">
+            <div id="header">
+                <!-- Flex layout -->
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0Hg0MuwYvAOQXIgxJR1-4ynL9ZlPFpCZh2rJ_8zAM4ufjdAtB" id="countryFlag" />
+                <p id="title">Verbe Românești</p>
+                <img src="https://image.flaticon.com/icons/png/512/23/23558.png" id="countryShape" />
+            </div>
+            <div id="gameContainer">
+                <!-- 3x2 Grid layout -->
+                <span id="passedCount" class="counter">+3</span>
+
+                <div class="exercise" id="presentIndicativeExercise">
+                    <p class="question">Cum se spune?</p>
+                    <p>
+                        <span class="personalPronoun">Tu</span>
+                        <input class="answer" type="text" />.
+                        &nbsp;(<span class="infinitive">a vorbi</span>)
+                    </p>
+                </div>
+
+                <div class="exercise" id="perfectExercise">
+                    <p class="question">Ce-i corect?</p>
+                    <p>
+                        <span class="perfectBegin">Ea a</span>
+                        <input class="answer" type="text" />.
+                        &nbsp;(<span class="infinitive">a gândi</span>)
+                    </p>
+                </div>
+
+                <div class="exercise" id="substantivationExercise">
+                    <p class="question">
+                        Ce este substantivizarea verbului „<span class="infinitive">a întreba</span>”?
+                    </p>
+                    <p>
+                        <input class="answer" type="text" />
+                    </p>
+                </div>
+
+                <div class="exercise" id="imperativeExercise">
+                    <p class="question">Ce ai striga?</p>
+                    <p>
+                        <span class="personalPronoun">Voi</span>!
+                        &nbsp;<input class="answer" type="text" />!
+                        &nbsp;(<span class="infinitive">a pleca</span>)
+                    </p>
+                </div>
+
+                <div id="loadExerciseSpinner">Loading ...</div>
+
+                <span id="failedCount" class="counter">-1</span>
+
+                <div id="buttonContainer">
+                    <button id="checkButton"><img src="">Verifica</button>
+                    <button id="finishButton"><img src="">Încheia lecția</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="scripts/main.js"></script>
+    </body>
+</html>
