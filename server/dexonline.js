@@ -26,14 +26,18 @@ function scrapeConjugation(conjugatedVerb, pageHtml)
     
     const $verbLabel = $(".panel-body .label").filter((index, element) => element.textContent === "verb");
     if($verbLabel.length === 0) return null;
+    // TO DO: there can be multiple conjugationTables (e.g. "voiam", but care for "vin")
     const $conjugationTable = $(".lexeme").filter((index, element) => $(element).siblings().has($verbLabel).length > 0).eq(0);
 
     const $conjugatedVerbListItems = $("li", $conjugationTable).filter((index, domElement) => domElement.textContent === conjugatedVerb);
-    const $conjugatedVerbCells = $conjugatedVerbListItems.map((index, domElement) => $(domElement).closest("td"));
+    const $conjugatedVerbCells = $conjugatedVerbListItems.map((index, domElement) => $(domElement).closest("td"))
+    .filter((index, $element) => $.contains($conjugationTable[0], $element[0]));
+
+    if($conjugatedVerbCells.length === 0) return null;
 
     const conjugation = {};
     conjugation.conjugatedVerb = conjugatedVerb;
-    conjugation.infinitive = $conjugationTable.closest(".panel-body").siblings(".panel-heading").text().replace("Intrare: ", "").trim();
+    conjugation.infinitive = scrapeInfintive($conjugationTable);
     conjugation.conjugationParametersList = [];
 
     $conjugatedVerbCells.each((index, conjugatedVerbCellDom) =>
@@ -61,6 +65,12 @@ function scrapeConjugation(conjugatedVerb, pageHtml)
     });
 
     return conjugation;
+}
+
+
+function scrapeInfintive($conjugationTable)
+{
+    return $(`tr:eq(${tableRowIndices.impersonal}) td:eq(0)`, $conjugationTable).text().trim();
 }
 
 
