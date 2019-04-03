@@ -7,6 +7,7 @@ const searchUrlPattern = "https://dexonline.ro/definitie/${this.query}";
 const personsCount = 3;
 const tableRowIndices =
 {
+    impersonalHeaders: 0,
     impersonal: 1,
     imperative: 2,
     tenses: 4,
@@ -17,7 +18,7 @@ let scrapingJsdom;
 let $;
 
 
-function scrapeConjugation(conjugatedVerb, pageHtml)
+function scrapeConjugationPossibilities(conjugatedVerb, pageHtml)
 {
     console.log("Scraping for conjugatedVerb", conjugatedVerb);
 
@@ -27,18 +28,43 @@ function scrapeConjugation(conjugatedVerb, pageHtml)
     const $verbLabel = $(".panel-body .label").filter((index, element) => element.textContent === "verb");
     if($verbLabel.length === 0) return null;
     // TO DO: there can be multiple conjugationTables (e.g. "voiam", but care for "vin")
-    const $conjugationTable = $(".lexeme").filter((index, element) => $(element).siblings().has($verbLabel).length > 0).eq(0);
+    const $conjugationTables = $(".lexeme").filter((index, element) => $(element).siblings().has($verbLabel).length > 0);
+    
+    const conjugationPossibilities = {};
+    conjugationPossibilities.verbs = [];
+    
+    $conjugationTables.each((index, conjugationTableDom) =>
+    {
+        const verb = scrapeOverVerbtable(conjugationTableDom, conjugatedVerb);     
+        verb && conjugationPossibilities.verbs.push(verb);   
+    });    
+
+    if(conjugationPossibilities.verbs.length > 0)
+    {
+        conjugationPossibilities.conjugatedVerb = conjugatedVerb;
+        return conjugationPossibilities;
+    }
+    else return null;
+}
+
+
+function scrapeOverVerbtable(conjugationTableDom, conjugatedVerb)
+{
+    const $conjugationTable = $(conjugationTableDom);
 
     const $conjugatedVerbListItems = $("li", $conjugationTable).filter((index, domElement) => domElement.textContent === conjugatedVerb);
     const $conjugatedVerbCells = $conjugatedVerbListItems.map((index, domElement) => $(domElement).closest("td"))
-    .filter((index, $element) => $.contains($conjugationTable[0], $element[0]));
+    .filter((index, $element) => $.contains(conjugationTableDom, $element[0]));
 
     if($conjugatedVerbCells.length === 0) return null;
 
-    const conjugation = {};
-    conjugation.conjugatedVerb = conjugatedVerb;
-    conjugation.infinitive = scrapeInfintive($conjugationTable);
-    conjugation.conjugationParametersList = [];
+    const isDefectiveVerb = ($conjugationTable.parent().find(".label:contains('defectiv')").length > 0);
+    if(isDefectiveVerb) return null;
+
+    const verb = {};
+    verb.type = scrapeVerbtype($conjugationTable);
+    verb.infinitive = scrapeInfintive($conjugationTable);
+    verb.conjugationParametersList = [];
 
     $conjugatedVerbCells.each((index, conjugatedVerbCellDom) =>
     {
@@ -61,16 +87,29 @@ function scrapeConjugation(conjugatedVerb, pageHtml)
         {
             scrapedConjugationParameters = scrapePersonalConjugationParameters($conjugationTable, conjugatedVerbCellDom, conjugationVerbCellIndices);
         }        
-        conjugation.conjugationParametersList.push(scrapedConjugationParameters);
+        verb.conjugationParametersList.push(scrapedConjugationParameters);
     });
 
-    return conjugation;
+    return verb;
+}
+
+
+function scrapeVerbtype($conjugationTable)
+{
+    const inflectionType = $(`tr:eq(${tableRowIndices.impersonalHeaders}) td:eq(0) a`, $conjugationTable).text();
+    
+    if(inflectionType.includes("aux")) return "auxiliary";
+    else return "full";
 }
 
 
 function scrapeInfintive($conjugationTable)
 {
-    return $(`tr:eq(${tableRowIndices.impersonal}) td:eq(0)`, $conjugationTable).text().trim();
+    const bareInfinitive = $(`tr:eq(${tableRowIndices.impersonal}) td:eq(0) li[class='']`, $conjugationTable)
+    .filter((index, domElement) => domElement.classList.length === 0).text().trim();
+
+    const infinitive = "a " + bareInfinitive;
+    return infinitive;
 }
 
 
@@ -154,5 +193,5 @@ function convertPersonStringToNumber(personString)
 module.exports =
 {
     searchUrlPattern: searchUrlPattern,
-    scrapeConjugation: scrapeConjugation
+    scrapeConjugationPossibilities: scrapeConjugationPossibilities
 };

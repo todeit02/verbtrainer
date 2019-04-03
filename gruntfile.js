@@ -4,6 +4,14 @@ module.exports = function (grunt)
 {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+
+        ts:
+        {
+            server :
+            {
+                tsconfig: 'server/tsconfig.json'
+            }
+        },
         
         shell:
         {
@@ -34,7 +42,9 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-watcher');
     grunt.loadNpmTasks('grunt-webpack');
+    grunt.loadNpmTasks('grunt-ts');
 
     // Default task(s).
-    grunt.registerTask('default', ['webpack:dev', 'shell:npmStart']);
+    grunt.registerTask('buildClient', ['webpack:dev']);
+    grunt.registerTask('buildStartServer', ['ts:server', 'shell:npmStart']);
 };

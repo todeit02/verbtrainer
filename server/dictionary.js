@@ -19,7 +19,7 @@ function getVerbPage(searchUrlTemplate, verb)
 }
 
 
-async function getConjugation(searchUrlTemplate, verb, scraperFunction)
+async function getConjugationPossibilities(searchUrlTemplate, verb, scraperFunction)
 {
     console.log("Fetching conjugation parameters for:", verb);
 
@@ -36,5 +36,5 @@ function fillTemplate(templateString, templateVarsObject)
 
 module.exports =
 {
-    getConjugation: getConjugation
+    getConjugationPossibilities: getConjugationPossibilities
 };

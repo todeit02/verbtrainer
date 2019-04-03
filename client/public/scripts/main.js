@@ -64,8 +64,10 @@
     enqueueExercise(wordsPercentile)
     .then(() =>
     {
-        console.log("Enqueued exercise.")
+        console.log("Enqueued exercise.");
+        $(".exercise").hide();    
         displayNextExercise();
+        hideLoadExerciseSpinner();
     });
 
     registerInputListeners();
@@ -76,22 +78,26 @@
     function enqueueExercise(wordsPercentile)
     {
         return $.getJSON("/randomword/percentile/" + wordsPercentile)
-        .then(conjugation =>
+        .then(conjugationPossibilities =>
         {
-            const enqueueingExercise = createExercise(conjugation, wordsPercentile, languageCode);
+            const enqueueingExercise = createExercise(conjugationPossibilities, wordsPercentile, languageCode);
             upcomingExercises.unshift(enqueueingExercise);
         });
     }
 
 
-    function createExercise(conjugation, wordsPercentile, languageCode)
+    function createExercise(conjugationPossibilities, wordsPercentile, languageCode)
     {
         const exercise = {};
-        exercise.solution = conjugation.conjugatedVerb;
-        exercise.infinitive = conjugation.infinitive;
+        exercise.solution = conjugationPossibilities.conjugatedVerb;
+        
+        const verb = getRandomArrayElement(conjugationPossibilities.verbs);
+
+        exercise.verbType = verb.type;
+        exercise.infinitive = verb.infinitive;
         exercise.wordsPercentile = wordsPercentile;
         exercise.languageCode = languageCode;
-        exercise.conjugationParameters = getRandomArrayElement(conjugation.conjugationParametersList);
+        exercise.conjugationParameters = getRandomArrayElement(verb.conjugationParametersList);
         exercise.status = ExerciseStatus.Pending;
         
         return exercise;
@@ -101,21 +107,24 @@
     function displayNextExercise()
     {        
         workingExercise = upcomingExercises.pop();
+        console.log("workingExercise:", workingExercise);
 
-        const { languageCode, infinitive } = workingExercise;
+        const { languageCode, verbType, infinitive } = workingExercise;
         const { numerus, person, tense } = workingExercise.conjugationParameters;
 
-        const exerciseDomId = getExerciseTemplateId(tense, workingExercise.conjugationParameters.mood, workingExercise.conjugationParameters.form);
+        const exerciseDomId = getExerciseTemplateId(verbType, tense, workingExercise.conjugationParameters.mood, workingExercise.conjugationParameters.form);
         const $exerciseDom = $("#" + exerciseDomId);
 
-        if(exerciseDomId === "presentIndicativeExercise")
+        resetExerciseTemplate($exerciseDom[0]);
+
+        if(["presentIndicativeExercise", "imperfectExercise", "simplePastExercise", "pastPerfectExercise"].includes(exerciseDomId))
         {
             $(".question", $exerciseDom).text(getRandomArrayElement(generalQuestions));
             const capitalizedPersonalPronoun = capitalizeFirstLetter(getRandomPersonalPronoun(languageCode, numerus, person));
             $(".personalPronoun", $exerciseDom).text(capitalizedPersonalPronoun);
             $(".infinitive", $exerciseDom).text(infinitive);
         }
-        else if(exerciseDomId === "perfectExercise")
+        else if(exerciseDomId === "perfectIndicativeExercise")
         {
             $(".question", $exerciseDom).text(getRandomArrayElement(generalQuestions));
             const randomNumerus = getRandomNumerus(languageCode);
@@ -136,11 +145,9 @@
             $(".infinitive", $exerciseDom).text(infinitive);
         }
 
-        $(".answer", $exerciseDom).val('');
-
-        hideLoadExerciseSpinner();
-
         $displayingExerciseDom = $("#" + exerciseDomId).show();
+
+        $(".answer", $displayingExerciseDom).focus();
     }
 
 
@@ -150,13 +157,14 @@
         {
             $(event.target).prop("disabled", true);
 
-            handleAnswer($(".answer", $displayingExerciseDom).val());
+            handleAnswer($(".answer", $displayingExerciseDom).val().toLowerCase());
 
-            $(".exercise").hide();
-            showLoadExerciseSpinner();
-            enqueueExercise(wordsPercentile)
+            const exerciseEnqueued = enqueueExercise(wordsPercentile);
+            const animationFinished = getAnimationsFinishedPromise($(".answer", $displayingExerciseDom)[0]);
+            Promise.all([exerciseEnqueued, animationFinished])
             .then(() =>
             {
+                $(".exercise").hide();    
                 displayNextExercise();
                 $(event.target).prop("disabled", false);
             });
@@ -171,14 +179,19 @@
     }
 
 
-    function getExerciseTemplateId(tense, mood, form)
+    function getExerciseTemplateId(verbType, tense, mood, form)
     {
-        if(tense === "prezent" && mood === "indicativ") return "presentIndicativeExercise";
-        else if(form === "participiu") return "perfectExercise";
-        else if(form === "infinitiv lung") return "substantivationExercise"; // TO DO: something wrong here
-        else if(mood === "imperativ") return "substantivationExercise";
+        if(verbType !== "full") return "unavailableExercise";
 
-        return null;
+        if(tense === "prezent" && mood === "indicativ") return "presentIndicativeExercise";
+        else if(tense === "imperfect") return "imperfectExercise";
+        else if(tense === "perfect simplu") return "simplePastExercise";
+        else if(form === "mai mult ca perfect") "pastPerfectExercise";
+        else if(form === "participiu") return "perfectIndicativeExercise";
+        else if(form === "infinitiv lung") return "substantivationExercise";
+        else if(mood === "imperativ") return "imperativeExercise";
+
+        return "unavailableExercise";
     }
 
 
@@ -253,13 +266,21 @@
 
     function showExerciseSuccess()
     {
-
+        $(".answer", $displayingExerciseDom).addClass("animatedCorrectAnswerBackground");
+        $("#passedCount").addClass("shakeGrowAnimated");
+        getAnimationsFinishedPromise($("#passedCount")[0])
+        .then(() => $("#passedCount").removeClass("shakeGrowAnimated"));
     }
 
 
     function showExerciseFailure()
     {
+        $(".answer", $displayingExerciseDom).addClass("animatedWrongAnswerBackground");  
+        $("#failedCount").addClass("shakeGrowAnimated");
+        getAnimationsFinishedPromise($("#failedCount")[0])
+        .then(() => $("#failedCount").removeClass("shakeGrowAnimated"));      
 
+        $(".answer", $displayingExerciseDom).val(workingExercise.solution);
     }
 
 
@@ -288,6 +309,29 @@
     function hideLoadExerciseSpinner()
     {
         $("#loadExerciseSpinner").hide();
+    }
+
+
+    function getAnimationsFinishedPromise(domElement)
+    {
+        return new Promise(resolve =>
+        {
+            const listener = event =>
+            {
+                domElement.removeEventListener("animationend", listener);
+                resolve(event);
+            }
+            domElement.addEventListener("animationend", listener);
+        });
+    }
+
+
+    function resetExerciseTemplate(domElement)
+    {
+        console.log("Resetting", domElement.outerHTML);
+        $(".answer", domElement).removeClass("animatedCorrectAnswerBackground");
+        $(".answer", domElement).removeClass("animatedWrongAnswerBackground");         
+        $(".answer", domElement).val('');
     }
 
 

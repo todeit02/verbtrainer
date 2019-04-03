@@ -1,0 +1,12 @@
+- Fix bug where conjugated auxiliary verb forms are treated as actual verbs.
+- Jump exercise if there is no template.
+- Fix "Vreavra / începe-ncepe" bug.
+- Add start screen.
+- Add difficulty settings.
+- Add end screen.
+- Load lesson as chunk instead of single exercises.
+- Allow synonyms
+- Add backend functionality for creating exercise type with infinitive as answer.
+- Fix bug where substantivation exercise is shown where there is actually a prezent verb.
+- Improve exercise templates for more natural exercises (like Romanian imperfect and perfect simplu).
+- Add possibility for user to report an error.

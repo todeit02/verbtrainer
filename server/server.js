@@ -13,8 +13,16 @@ app.use(express.static(__dirname + "/../client/public"));
 
 app.get("^/verb/:verb([^/]+)", (req, res) =>
 {
-    res.send("Route unavailable.");
+    console.log(arguments[0]);
+    Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, req.params.verb, Dexonline.scrapeConjugationPossibilities)
+    .then(result => res.send(result))
+    .catch(error =>
+    {
+        res.send("An error occured ... :(");
+        console.error(`Error on route "${arguments[0]}":`, error);
+    });
 });
+
 
 app.get("^/randomword/percentile/:percentile([0-9]{1,3})", (req, res) =>
 {
@@ -36,18 +44,19 @@ app.get("^/randomword/percentile/:percentile([0-9]{1,3})", (req, res) =>
         catch (error)
         {
             res.send("An error occured ... :(");
-            console.error(error);
+            console.error(`Error on route "${arguments[0]}":`, error);
         }
     })();
 
     const getResult = () =>
     {
         const randomWord = WordFrequency.getRandomWordByPercentile(Number(req.params.percentile));    
-        Dictionary.getConjugation(Dexonline.searchUrlPattern, randomWord, Dexonline.scrapeConjugation)
+        Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, randomWord, Dexonline.scrapeConjugationPossibilities)
         .then(result => randomWordIterator.next(result));        
     }    
 
     randomWordIterator.next();
 });
+
 
 app.listen(port, () => console.log("Server listening on port " + port));
