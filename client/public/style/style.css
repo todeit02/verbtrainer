@@ -25,11 +25,13 @@ button
     font-weight: bold;
     text-align: center;
     align-self: center;
+    z-index: -1;
 }
 
 
 .exercise
 {
+    background-color: white;
     display: none;
     text-align: center;
 }
@@ -38,6 +40,8 @@ button
 .answer
 {
     border: 1px solid black;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
     font-size: inherit;
     font-family: inherit;
     font-weight: bold;
@@ -116,11 +120,30 @@ button
 }
 
 
+#difficultyContainer
+{
+    text-align: center;
+}
+
+
+#scoreContainer
+{
+    text-align: center;
+}
+
+
+#difficultyEmoji
+{
+    font-size: 3em;
+}
+
+
 #passedCount
 {
     grid-area: passedCount;
     color: green;
-    text-shadow: 0.05em 0.05em #9efc81;;
+    text-shadow: 0.05em 0.05em #9efc81;
+    transform: translate(100%);
 }
 
 
@@ -129,6 +152,7 @@ button
     grid-area: failedCount;
     color: red;
     text-shadow: 0.05em 0.05em #ff8787;
+    transform: translate(-100%);
 }
 
 
@@ -148,6 +172,32 @@ button
     74.95% { transform: rotate(15deg) scale(1.5) }
     91.6% { transform: rotate(-7.5deg) scale(1.167) }
     100% { transform: rotate(0) scale(1) }
+}
+
+
+.animatedSlideLeftToZero
+{    
+    animation: slideLeftToZeroAnimation 0.5s ease-out forwards;
+}
+
+
+.animatedSlideRightToZero
+{    
+    animation: slideRightToZeroAnimation 0.5s ease-out forwards;
+}
+
+
+@keyframes slideLeftToZeroAnimation
+{
+    90% { transform: translate(10%) }
+    100% { transform: translate(0) }
+}
+
+
+@keyframes slideRightToZeroAnimation
+{
+    90% { transform: translate(-10%) }
+    100% { transform: translate(0) }
 }
 
 
@@ -176,6 +226,150 @@ button
 {
     width: 100%;
     margin: 0.1em 0;
+}
+
+
+input[type=range]
+{
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: 50%; /* Specific width is required for Firefox. */
+    background: transparent; /* Otherwise white in Chrome */
+} 
+  
+
+input[type=range]::-webkit-slider-thumb
+{
+    -webkit-appearance: none;
+}
+  
+  
+input[type=range]:focus
+{
+    /*outline: none;*/ /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+  
+
+input[type=range]::-ms-track
+{
+    width: 100%;
+    cursor: pointer;
+  
+    /* Hides the slider so custom styles can be added */
+    background: transparent; 
+    border-color: transparent;
+    color: transparent;
+}
+
+
+input[type=range]::-webkit-slider-thumb
+{
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+    height: 3.5em;
+    width: 1.75em;
+    border-radius: 0.25em;
+    background: #ffffff;
+    cursor: pointer;
+    margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+    box-shadow: 1px 1px; /* Add cool effects to your sliders! */
+}
+  
+
+  /* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb
+{
+    box-shadow: 1px 1px;
+    border: 1px solid #000000;
+    height: 3.5em;
+    width: 1.75em;
+    border-radius: 0.25em;
+    background: black;
+    cursor: pointer;
+}
+
+  
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb
+{
+    box-shadow: 1px 1px;
+    border: 1px solid #000000;
+    height: 3.5em;
+    width: 1.75em;
+    border-radius: 0.25em;
+    background: black;
+    cursor: pointer;
+}
+
+
+input[type=range]::-webkit-slider-runnable-track
+{
+    width: 100%;
+    height: 1em;
+    cursor: pointer;
+    box-shadow: 1px 1px;
+    background: #3071a9;
+    border-radius: 0.2em;
+    border: 1px solid #010101;
+}
+  
+
+input[type=range]:focus::-webkit-slider-runnable-track
+{
+    background: #367ebd;
+}
+  
+
+input[type=range]::-moz-range-track
+{
+    width: 100%;
+    height: 1em;
+    cursor: pointer;
+    box-shadow: 1px 1px;
+    background: #3071a9;
+    border-radius: 0.2em;
+    border: 1px solid #010101;
+}
+
+  
+input[type=range]::-ms-track
+{
+    width: 100%;
+    height: 1em;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    border-width: 16px 0;
+    color: transparent;
+}
+
+
+input[type=range]::-ms-fill-lower
+{
+    background: #2a6495;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+  
+input[type=range]:focus::-ms-fill-lower
+{
+    background: #3071a9;
+}
+
+
+input[type=range]::-ms-fill-upper
+{
+    background: #3071a9;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+
+input[type=range]:focus::-ms-fill-upper
+{
+    background: #367ebd;
 }
 
 

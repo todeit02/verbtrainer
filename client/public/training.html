@@ -1,0 +1,117 @@
+<div id="gameContainer">
+    <!-- 3x2 Grid layout -->
+    <span id="passedCount" class="counter">+3</span>
+
+    <div class="exercise" id="presentIndicativeExercise">
+        <p class="question">Cum se spune?</p>
+        <p>
+            <span class="personalPronoun">Tu</span>
+            <input class="answer" type="text" />.&nbsp;<wbr>
+            (<span class="infinitive">a vorbi</span>, prezent)
+        </p>
+    </div>
+
+    <!-- unmapped exercise -->
+    <div class="exercise" id="presentSubjunctiveExercise">
+        <p class="question">Ce-i corect?</p>
+        <p>
+            
+        </p>
+    </div>
+
+    <div class="exercise" id="perfectIndicativeExercise">
+        <p class="question">Ce-i corect?</p>
+        <p>
+            <span class="perfectBegin">Ea a</span>
+            <input class="answer" type="text" />.&nbsp;<wbr>
+            (<span class="infinitive">a gândi</span>)
+        </p>
+    </div>
+
+    <!-- unmapped exercise -->
+    <div class="exercise" id="perfectSubjunctiveExercise">
+        <p class="question">Ce-i corect?</p>
+        <p>
+            
+        </p>
+    </div>
+
+    <div class="exercise" id="imperfectExercise">
+        <p class="question">Ce ai striga?</p>
+        <p>
+            <span class="personalPronoun">Tu</span>
+            <input class="answer" type="text" />.&nbsp;<wbr>
+            (<span class="infinitive">a pleca</span>, imperfect)
+        </p>
+    </div>
+
+    <div class="exercise" id="simplePastExercise">
+        <p class="question">Ce-i corect?</p>
+        <p>
+            <span class="personalPronoun">Eu</span>
+            <input class="answer" type="text" />.&nbsp;<wbr>
+            (<span class="infinitive">a pleca</span>, perfect simplu)
+        </p>
+    </div>
+
+    <div class="exercise" id="pastPerfectExercise">
+        <p class="question">Ce-i corect?</p>
+        <p>
+            <span class="personalPronoun">El</span>
+            <input class="answer" type="text" />.&nbsp;<wbr>
+            (<span class="infinitive">a pleca</span>, mai mult ca perfect)
+        </p>
+    </div>
+
+    <div class="exercise" id="substantivationExercise">
+        <p class="question">
+            Ce este substantivizarea verbului „<span class="infinitive">a întreba</span>”?
+        </p>
+        <p>
+            <input class="answer" type="text" />
+        </p>
+    </div>
+
+    <div class="exercise" id="imperativeExercise">
+        <p class="question">Ce ai striga?</p>
+        <p>
+            <span class="personalPronoun">Voi</span>!&nbsp;<wbr>
+            <input class="answer" type="text" />!&nbsp;<wbr>
+            (<span class="infinitive">a pleca</span>)
+        </p>
+    </div>
+
+    <!-- unmapped exercise -->
+    <div class="exercise" id="gerundExercise">
+        <p class="question">Ce-i corect?</p>
+        <p>
+            
+        </p>
+    </div>
+
+    <!-- unmapped exercise -->
+    <div class="exercise" id="infinitiveExercise">
+        <p class="question"></p>
+        <p>
+            
+        </p>
+    </div>
+
+    <!-- unmapped exercise -->
+    <div class="exercise" id="unavailableExercise">
+        <p>
+            Sorry, this exercise type is yet to come.<br />
+            Here you can only lose. :(
+        </p>
+        <input class="answer" type="text" placeholder="Meh, wrong ..." disabled />
+    </div>
+
+    <div class="exercise" id="loadExerciseSpinner"><img src="images/spinner.svg"></div>
+
+    <span id="failedCount" class="counter">-1</span>
+
+    <div id="buttonContainer">
+        <button id="checkButton"><img src="">Verifica</button>
+        <button id="finishButton"><img src="">Încheia lecția</button>
+    </div>
+</div>
