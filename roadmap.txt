@@ -1,4 +1,3 @@
-- Add end screen.
 - Fix "vreavra" bug.
 - Allow synonyms.
 - Limit request frequency to dictionary to not get rejected.

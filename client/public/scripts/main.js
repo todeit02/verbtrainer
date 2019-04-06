@@ -5,8 +5,8 @@
     do
     {
         let trainingParameters = await StartScreen.run();
-        let trainingResult = await TrainingScreen.run(trainingParameters);
-        await SummaryScreen.run(trainingResult);
+        let completedExercises = await TrainingScreen.run(trainingParameters);
+        await SummaryScreen.run(completedExercises);
     }
     while(everythingIsGoingAsPlanned);
 

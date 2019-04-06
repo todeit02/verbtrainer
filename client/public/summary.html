@@ -1,8 +1,15 @@
+<link rel="stylesheet" href="style/style.css">
 <div id="summaryContainer">  
     <div id="scoreContainer">
-        <p id="scoreTitle">Scorul tău:</p>
-        <p id="scoreNumber">0</p>
-        <div id="scoreComposition">+1<span id="correctCount"></span><span id="wrongCount">-1</span></div>
+
+        <h2 id="scoreTitle">Scorul tău:</h2>
+        <span id="scoreNumber" class="counter">0</span>
+        
+        <div id="scoreComposition">
+            <span id="passedCount" class="counter">+1</span>
+            <span id="failedCount" class="counter">-1</span>
+        </div>
+
     </div>
     <div id="buttonContainer">
         <button id="restartButton"><img src="">Întoarce la început</button>
@@ -11,15 +18,17 @@
         <h2 id="mistakesTitle">Greșelile tale</h2>
         <ul id="mistakesList">
 
-            <li class="mistakeItem">
-                <span class="infinitive">a greși</span>&nbsp;|&nbsp;
-                <span class="conjugationParameters">1. persoană, singular, prezent, indicativ</span>
+            <li class="mistakeItem template">
+                <p class="exerciseParameters">
+                    <span class="infinitive">a greși</span>&nbsp;|&nbsp;
+                    <span class="conjugationParameters">1. persoană, singular, prezent, indicativ</span>
+                </p>
                 <table>
                     <tr>
-                        <td>ai scris:</td><td>greșec</td>
+                        <td>ai scris:</td><td class="wrongAnswer">greșec</td>
                     </tr>
                     <tr>
-                        <td>corect:</td><td>greșesc</td>
+                        <td>corect:</td><td class="correctAnswer">greșesc</td>
                     </tr>
                 </table>
             </li>

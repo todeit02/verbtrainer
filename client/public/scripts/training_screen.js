@@ -42,14 +42,6 @@ TrainingScreen = (() =>
     ];
 
 
-    const ExerciseStatus = Object.freeze(
-    {
-        Pending: 1,
-        Passed: 2,
-        Failed: 3
-    });
-
-
     const screenUrl = "training.html";
 
     let loadingAnimation;
@@ -113,7 +105,7 @@ TrainingScreen = (() =>
             const exerciseLoadedPromise = $.getJSON("/randomword/percentile/" + wordsPercentile)
             .then(conjugationPossibilities => 
             {
-                const enqueueingExercise = createExercise(conjugationPossibilities, trainingParameters.difficulty, trainingParameters.languageCode);
+                const enqueueingExercise = Exercise(conjugationPossibilities, trainingParameters.difficulty, trainingParameters.languageCode);
                 exerciseQueue.push(enqueueingExercise);
                 loadingAnimation.advance();
             });
@@ -125,33 +117,15 @@ TrainingScreen = (() =>
     }    
 
 
-    function createExercise(conjugationPossibilities, difficulty, languageCode)
-    {
-        const exercise = {};
-        exercise.solution = conjugationPossibilities.conjugatedVerb;
-        
-        const verb = getRandomArrayElement(conjugationPossibilities.verbs);
-
-        exercise.verbType = verb.type;
-        exercise.infinitive = verb.infinitive;
-        exercise.difficulty = difficulty;
-        exercise.languageCode = languageCode;
-        exercise.conjugationParameters = getRandomArrayElement(verb.conjugationParametersList);
-        exercise.status = ExerciseStatus.Pending;
-        
-        return exercise;
-    }
-
-
     function displayNextExercise(exerciseQueue)
     {        
         workingExercise = exerciseQueue.peek();
         console.log("workingExercise:", workingExercise);
 
         const { languageCode, verbType, infinitive } = workingExercise;
-        const { numerus, person, tense } = workingExercise.conjugationParameters;
+        const { numerus, person, tense, mood, form } = workingExercise.conjugationParameters;
 
-        const exerciseDomId = getExerciseTemplateId(verbType, tense, workingExercise.conjugationParameters.mood, workingExercise.conjugationParameters.form);
+        const exerciseDomId = getExerciseTemplateId(verbType, tense, mood, form);
         const $exerciseDom = $("#" + exerciseDomId);
 
         resetExerciseTemplate($exerciseDom[0]);
@@ -261,13 +235,6 @@ TrainingScreen = (() =>
     }
 
 
-    function getRandomArrayElement(array)
-    {
-        if(!array && array.length) return null;        
-        else return array[Math.floor(Math.random() * array.length)];
-    }
-
-
     function getRandomPerson(languageCode)
     {
         return getRandomArrayElement(Object.keys(personalPronouns[languageCode][getRandomNumerus(languageCode)]));
@@ -282,7 +249,11 @@ TrainingScreen = (() =>
 
     function handleAnswer(answer)
     {
-        if(workingExercise.solution.toLowerCase() === answer.toLowerCase()) passExercise();
+        workingExercise.answer = answer;
+        if(workingExercise.solutions.map(solution => solution.toLowerCase()).includes(answer.toLowerCase()))
+        {
+            passExercise();
+        }
         else failExercise();
     }
 
@@ -317,7 +288,7 @@ TrainingScreen = (() =>
         getAnimationsFinishedPromise($("#failedCount")[0])
         .then(() => $("#failedCount").removeClass("shakeGrowAnimated"));      
 
-        $(".answer", $displayingExerciseDom).val(workingExercise.solution);
+        $(".answer", $displayingExerciseDom).val(workingExercise.solutions.join('|'));
     }
 
 
@@ -388,13 +359,6 @@ TrainingScreen = (() =>
         $(".answer", domElement).removeClass("animatedCorrectAnswerBackground");
         $(".answer", domElement).removeClass("animatedWrongAnswerBackground");         
         $(".answer", domElement).val('');
-    }
-
-
-    function capitalizeFirstLetter(string)
-    {
-        if(string.length === 0) return string;
-        else return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
 
