@@ -24,7 +24,7 @@ app.get("^/verb/:verb([^/]+)", (req, res) =>
 
 app.get("^/randomconjugation/infinitive/:infinitive([^/]+)", (req, res) =>
 {
-    Dictionary.getRandomConjugation(Dexonline.searchUrlPattern, req.params.infinitive, Dexonline.scrapeRandomConjugation)
+    Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, req.params.infinitive, Dexonline.scrapeRandomConjugation)
     .then(result => res.send(result))
     .catch(error =>
     {

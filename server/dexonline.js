@@ -14,6 +14,35 @@ const tableRowIndices =
     firstSingular: 5,
     firstPlural: 8
 };
+const tenseMoodIndices =
+{
+    "prezent":
+    {
+        "indicativ": 2,
+        "conjunctiv": 3
+    },
+    "imperfect": { "indicativ": 4 },
+    "perfect simplu": { "indicativ": 5 },
+    "mai mult ca perfect": { "indicativ": 6 }
+}
+const formIndices =
+{
+    "infinitiv": 0,
+    "infinitiv lung": 1,
+    "participiu": 2,
+    "gerunziu": 3
+};
+const moodColumnIndices =
+{
+    "imperativ": [0 ,1],
+    "indicativ": [2, 4, 5, 6],
+    "conjunctiv": [3]
+}
+const numerusPersonRowIndices =
+{
+    "singular": { 1: 5, 2: 6, 3: 7},
+    "plural": { 1: 8, 2: 9, 3: 10}
+}
 
 let $;
 
@@ -32,9 +61,9 @@ function scrapeConjugationPossibilities(conjugatedVerb, pageDom)
     const conjugationPossibilities = {};
     conjugationPossibilities.verbs = [];
     
-    $conjugationTables.each((index, conjugationTableDom) =>
+    $conjugationTables.each((index, conjugationTableDom) => 
     {
-        const verb = scrapeOverVerbtable(conjugationTableDom, conjugatedVerb);     
+        const verb = scrapeVerbFromVerbtable(conjugationTableDom, conjugatedVerb);     
         verb && conjugationPossibilities.verbs.push(verb);   
     });
 
@@ -47,7 +76,7 @@ function scrapeConjugationPossibilities(conjugatedVerb, pageDom)
 }
 
 
-function getRandomConjugation(infinitive)
+function scrapeRandomConjugationForInfinitive(infinitive)
 {
     console.log("Scraping for infinitive", infinitive);
 
@@ -58,12 +87,21 @@ function getRandomConjugation(infinitive)
     if($verbLabel.length === 0) return null;
     
     const $conjugationTables = $(".lexeme").filter((index, element) => $(element).siblings().has($verbLabel).length > 0);
-    
-    const conjugationPossibilities = {};
+    const $conjugationTablesReferringToInfinitive = $conjugationTables.filter((index, element) => scrapeInfintive($(element)) === infinitive);
+    const randomTableIndex = Math.floor(Math.random() * $conjugationTablesReferringToInfinitive.length);
+    const $randomTable = $conjugationTablesReferringToInfinitive.eq(randomTableIndex);
+
+    $conjugationTables.each((index, conjugationTableDom) =>
+    {
+        if(scrapeInfintive($(conjugationTableDom)) !== infinitive) return;
+
+
+        verb && conjugationPossibilities.verbs.push(verb);   
+    });
 }
 
 
-function scrapeOverVerbtable(conjugationTableDom, conjugatedVerb)
+function scrapeVerbFromVerbtable(conjugationTableDom, conjugatedVerb)
 {
     const $conjugationTable = $(conjugationTableDom);
 
@@ -238,8 +276,40 @@ function convertPersonStringToNumber(personString)
 }
 
 
+function getCellCoordinatesFromConjugation(conjugationParameters)
+{
+    const { form, numerus, mood, person, tense } = conjugationParameters;
+    let x, y;
+
+    if(form != null)
+    {
+        x = formIndices[form];
+        y = tableRowIndices.impersonal;        
+    }
+    else if(mood === "imperativ") // person doesn't matter
+    {
+        const columnIndices = { 0: "singular", 1: "plural"};
+        x = Object.keys(columnIndices).find(key => columnIndices[key] === numerus);
+        y = tableRowIndices.imperative;
+    }
+    else if(tense != null)
+    {
+        x = tenseMoodIndices[tense][mood];
+        if(x === tableRowIndices.firstSingular || x === tableRowIndices.firstPlural) x++;
+        y = numerusPersonRowIndices[numerus][person];
+    }
+}
+
+
+function getRandomConjugationParameters(personalFormWeight)
+{
+    
+}
+
+
 module.exports =
 {
     searchUrlPattern: searchUrlPattern,
-    scrapeConjugationPossibilities: scrapeConjugationPossibilities
+    scrapeConjugationPossibilities: scrapeConjugationPossibilities,
+    scrapeRandomConjugationForInfinitive
 };
