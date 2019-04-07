@@ -105,7 +105,7 @@ function scrapeVerbtype($conjugationTable)
 
 function scrapeInfintive($conjugationTable)
 {
-    const bareInfinitive = $(`tr:eq(${tableRowIndices.impersonal}) td:eq(0) li[class='']`, $conjugationTable)
+    const bareInfinitive = $(`tr:eq(${tableRowIndices.impersonal}) td:eq(0) li[class='']:eq(0)`, $conjugationTable)
     .filter((index, domElement) => domElement.classList.length === 0).text().trim();
 
     const infinitive = "a " + bareInfinitive;
