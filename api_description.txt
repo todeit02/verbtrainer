@@ -21,3 +21,9 @@ ConjugationParameters
 		(optional) mood: string
 		(optional) person: number range 1..3
 		(optional) tense: string
+		(optional) synonymsIncludingSelf: Synonyms
+		
+Synonyms
+	Properties:
+		(optional) completeForms: string[]
+		(optional) elisionForms: string[]

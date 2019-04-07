@@ -288,7 +288,7 @@ TrainingScreen = (() =>
         getAnimationsFinishedPromise($("#failedCount")[0])
         .then(() => $("#failedCount").removeClass("shakeGrowAnimated"));      
 
-        $(".answer", $displayingExerciseDom).val(workingExercise.solutions.join('|'));
+        $(".answer", $displayingExerciseDom).val(workingExercise.solutions.join(" | "));
     }
 
 

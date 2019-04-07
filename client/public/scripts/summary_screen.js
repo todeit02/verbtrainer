@@ -66,7 +66,7 @@ const SummaryScreen = (() =>
             $(".infinitive", $creatingFailedExercise).text(failedExercise.infinitive);
             $(".conjugationParameters", $creatingFailedExercise).text(failedExercise.getConjugationParametersAsString());
             $(".wrongAnswer", $creatingFailedExercise).text(failedExercise.answer);
-            $(".correctAnswer", $creatingFailedExercise).text(failedExercise.solutions.join('|'));
+            $(".correctAnswer", $creatingFailedExercise).text(failedExercise.solutions.join(" | "));
 
             $("#mistakesList").append($creatingFailedExercise);
         }

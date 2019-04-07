@@ -1,6 +1,5 @@
 "use strict";
 const express       = require('express');
-const path          = require('path');
 const WordFrequency = require('./word_frequency');
 const Dictionary    = require('./dictionary');
 const Dexonline     = require('./dexonline');
@@ -13,13 +12,24 @@ app.use(express.static(__dirname + "/../client/public"));
 
 app.get("^/verb/:verb([^/]+)", (req, res) =>
 {
-    console.log(arguments[0]);
     Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, req.params.verb, Dexonline.scrapeConjugationPossibilities)
     .then(result => res.send(result))
     .catch(error =>
     {
         res.send("An error occured ... :(");
-        console.error(`Error on route "${arguments[0]}":`, error);
+        console.error("Error on route ^/verb/:verb([^/]+):", error);
+    });
+});
+
+
+app.get("^/randomconjugation/infinitive/:infinitive([^/]+)", (req, res) =>
+{
+    Dictionary.getRandomConjugation(Dexonline.searchUrlPattern, req.params.infinitive, Dexonline.scrapeRandomConjugation)
+    .then(result => res.send(result))
+    .catch(error =>
+    {
+        res.send("An error occured ... :(");
+        console.error("Error on route ^/randomconjugation/infinitive/:infinitive([^/]+)", error);
     });
 });
 

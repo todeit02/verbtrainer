@@ -16,12 +16,12 @@ function GetExerciseStatusCount(exercises, exerciseStatus)
 Exercise = (conjugationPossibilities, initDifficulty, initLanguageCode) =>
 {
 
-    const solutions = [conjugationPossibilities.conjugatedVerb];        
     const verb = getRandomArrayElement(conjugationPossibilities.verbs);
     const infinitive = verb.infinitive;
     const difficulty = initDifficulty;
     const languageCode = initLanguageCode;
     const conjugationParameters = getRandomArrayElement(verb.conjugationParametersList);
+    const solutions = conjugationParameters.synonymsIncludingSelf.completeForms;        
 
     let status = ExerciseStatus.Pending;
     let answer = null;

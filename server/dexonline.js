@@ -14,20 +14,19 @@ const tableRowIndices =
     firstSingular: 5,
     firstPlural: 8
 };
-let scrapingJsdom;
+
 let $;
 
 
-function scrapeConjugationPossibilities(conjugatedVerb, pageHtml)
+function scrapeConjugationPossibilities(conjugatedVerb, pageDom)
 {
     console.log("Scraping for conjugatedVerb", conjugatedVerb);
 
-    scrapingJsdom = new JSDOM(pageHtml);        
-    $ = jquery(scrapingJsdom.window);
+    $ = getJQueryFunction(pageDom);
     
     const $verbLabel = $(".panel-body .label").filter((index, element) => element.textContent === "verb");
     if($verbLabel.length === 0) return null;
-    // TO DO: there can be multiple conjugationTables (e.g. "voiam", but care for "vin")
+
     const $conjugationTables = $(".lexeme").filter((index, element) => $(element).siblings().has($verbLabel).length > 0);
     
     const conjugationPossibilities = {};
@@ -37,7 +36,7 @@ function scrapeConjugationPossibilities(conjugatedVerb, pageHtml)
     {
         const verb = scrapeOverVerbtable(conjugationTableDom, conjugatedVerb);     
         verb && conjugationPossibilities.verbs.push(verb);   
-    });    
+    });
 
     if(conjugationPossibilities.verbs.length > 0)
     {
@@ -45,6 +44,22 @@ function scrapeConjugationPossibilities(conjugatedVerb, pageHtml)
         return conjugationPossibilities;
     }
     else return null;
+}
+
+
+function getRandomConjugation(infinitive)
+{
+    console.log("Scraping for infinitive", infinitive);
+
+    scrapingJsdom = new JSDOM(pageHtml);        
+    $ = jquery(scrapingJsdom.window);
+    
+    const $verbLabel = $(".panel-body .label").filter((index, element) => element.textContent === "verb");
+    if($verbLabel.length === 0) return null;
+    
+    const $conjugationTables = $(".lexeme").filter((index, element) => $(element).siblings().has($verbLabel).length > 0);
+    
+    const conjugationPossibilities = {};
 }
 
 
@@ -87,6 +102,9 @@ function scrapeOverVerbtable(conjugationTableDom, conjugatedVerb)
         {
             scrapedConjugationParameters = scrapePersonalConjugationParameters($conjugationTable, conjugatedVerbCellDom, conjugationVerbCellIndices);
         }        
+
+        scrapedConjugationParameters.synonymsIncludingSelf = scrapeSynonyms(conjugatedVerbCellDom);
+
         verb.conjugationParametersList.push(scrapedConjugationParameters);
     });
 
@@ -165,6 +183,36 @@ function scrapePersonalConjugationParameters($conjugationTable, conjugatedVerbCe
     }
 
     return conjugationParameters;
+}
+
+
+function scrapeSynonyms(conjugatedVerbCellDom)
+{
+    const synonymsIncludingSelf = {};
+
+    $("li", conjugatedVerbCellDom).each((index, listItemDom) =>
+    {
+        if(listItemDom.classList.contains("notRecommended")) return;
+        if(listItemDom.classList.length === 0)
+        {
+            if(!synonymsIncludingSelf.completeForms) synonymsIncludingSelf.completeForms = [];
+            synonymsIncludingSelf.completeForms.push(listItemDom.textContent);
+        }
+        else if(listItemDom.classList.contains('elision'))
+        {
+            if(!synonymsIncludingSelf.elisionForms) synonymsIncludingSelf.elisionForms = [];
+            synonymsIncludingSelf.elisionForms.push(listItemDom.textContent);
+        }
+    });
+
+    return synonymsIncludingSelf;
+}
+
+
+function getJQueryFunction(pageDom)
+{
+    const scrapingJsdom = new JSDOM(pageDom);        
+    return jquery(scrapingJsdom.window);
 }
 
 
