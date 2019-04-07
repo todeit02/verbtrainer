@@ -5,6 +5,7 @@ const { JSDOM }     = require('jsdom');
 
 const searchUrlPattern = "https://dexonline.ro/definitie/${this.query}";
 const personsCount = 3;
+
 const tableRowIndices =
 {
     impersonalHeaders: 0,
@@ -14,17 +15,20 @@ const tableRowIndices =
     firstSingular: 5,
     firstPlural: 8
 };
-const tenseMoodIndices =
+
+const moodTenseColumnIndices =
 {
-    "prezent":
+    "indicativ":
     {
-        "indicativ": 2,
-        "conjunctiv": 3
+        "prezent": 2,
+        "imperfect": 4,
+        "perfect simplu": 5,
+        "mai mult ca perfect": 6
     },
-    "imperfect": { "indicativ": 4 },
-    "perfect simplu": { "indicativ": 5 },
-    "mai mult ca perfect": { "indicativ": 6 }
-}
+    "conjunctiv": { "prezent": 3 },
+    "imperativ": null
+};
+
 const formIndices =
 {
     "infinitiv": 0,
@@ -32,12 +36,7 @@ const formIndices =
     "participiu": 2,
     "gerunziu": 3
 };
-const moodColumnIndices =
-{
-    "imperativ": [0 ,1],
-    "indicativ": [2, 4, 5, 6],
-    "conjunctiv": [3]
-}
+
 const numerusPersonRowIndices =
 {
     "singular": { 1: 5, 2: 6, 3: 7},
@@ -76,12 +75,12 @@ function scrapeConjugationPossibilities(conjugatedVerb, pageDom)
 }
 
 
-function scrapeRandomConjugationForInfinitive(infinitive)
+// generate random conjugation parameters and scrape conjugated verb for infinitive
+function scrapeRandomConjugationForInfinitive(infinitive, pageDom)
 {
     console.log("Scraping for infinitive", infinitive);
 
-    scrapingJsdom = new JSDOM(pageHtml);        
-    $ = jquery(scrapingJsdom.window);
+    $ = getJQueryFunction(pageDom);
     
     const $verbLabel = $(".panel-body .label").filter((index, element) => element.textContent === "verb");
     if($verbLabel.length === 0) return null;
@@ -91,13 +90,19 @@ function scrapeRandomConjugationForInfinitive(infinitive)
     const randomTableIndex = Math.floor(Math.random() * $conjugationTablesReferringToInfinitive.length);
     const $randomTable = $conjugationTablesReferringToInfinitive.eq(randomTableIndex);
 
-    $conjugationTables.each((index, conjugationTableDom) =>
+    let conjugationParameters;
+    do
     {
-        if(scrapeInfintive($(conjugationTableDom)) !== infinitive) return;
+        conjugationParameters = getRandomConjugationParametersNoInfinitive(4);
+        const cellCoordinates = getCellCoordinatesFromConjugation(conjugationParameters);
+        const $conjugatedCell = $(`tr:eq(${cellCoordinates.y}) td:eq(${cellCoordinates.x})`, $randomTable);
+        
+        conjugationParameters.synonymsIncludingSelf = scrapeSynonyms($conjugatedCell[0]);
+    }
+    while(conjugationParameters.synonymsIncludingSelf == null);
 
-
-        verb && conjugationPossibilities.verbs.push(verb);   
-    });
+    
+    return conjugationParameters;
 }
 
 
@@ -111,7 +116,7 @@ function scrapeVerbFromVerbtable(conjugationTableDom, conjugatedVerb)
 
     if($conjugatedVerbCells.length === 0) return null;
 
-    const isDefectiveVerb = ($conjugationTable.parent().find(".label:contains('defectiv')").length > 0);
+    const isDefectiveVerb = checkIsDefectiveVerbTable($conjugationTable);
     if(isDefectiveVerb) return null;
 
     const verb = {};
@@ -243,7 +248,14 @@ function scrapeSynonyms(conjugatedVerbCellDom)
         }
     });
 
+    if(!synonymsIncludingSelf.completeForms && !synonymsIncludingSelf.elisionForms) return null;
     return synonymsIncludingSelf;
+}
+
+
+function checkIsDefectiveVerbTable($conjugationTable)
+{
+    return ($conjugationTable.parent().find(".label:contains('defectiv')").length > 0);
 }
 
 
@@ -294,16 +306,47 @@ function getCellCoordinatesFromConjugation(conjugationParameters)
     }
     else if(tense != null)
     {
-        x = tenseMoodIndices[tense][mood];
-        if(x === tableRowIndices.firstSingular || x === tableRowIndices.firstPlural) x++;
+        x = moodTenseColumnIndices[mood][tense];
         y = numerusPersonRowIndices[numerus][person];
+        if(y !== tableRowIndices.firstSingular && y !== tableRowIndices.firstPlural) x--;
     }
+    else return null;
+
+    return { x, y };
 }
 
 
-function getRandomConjugationParameters(personalFormWeight)
+function getRandomConjugationParametersNoInfinitive(personalFormWeight)
 {
+    let randomForm;
+    do
+    {
+        const formlessElements = [];
+        for(let i = 0; i < personalFormWeight; i++) formlessElements.push(null);
+        const randomFormIndex = Math.floor(Math.random() * [...Object.keys(formIndices), ...formlessElements].length);
+        randomForm = [...Object.keys(formIndices), ...formlessElements][randomFormIndex];
+    }
+    while(randomForm === "infinitiv");
+
+    if(randomForm != null) return { form: randomForm };
+
+    const randomNumerusIndex = Math.floor(Math.random() * Object.keys(numerusPersonRowIndices).length);
+    const randomNumerus = Object.keys(numerusPersonRowIndices)[randomNumerusIndex];
+
+    const randomMoodIndex = Math.floor(Math.random() * Object.keys(moodTenseColumnIndices).length);
+    const randomMood = Object.keys(moodTenseColumnIndices)[randomMoodIndex];
     
+    if(randomMood === "imperativ")
+    {
+        return { mood: randomMood, numerus: randomNumerus, person: 2 };
+    }
+    
+    const randomTenseIndex = Math.floor(Math.random() * Object.keys(moodTenseColumnIndices[randomMood]).length);
+    const randomTense = Object.keys(moodTenseColumnIndices[randomMood])[randomTenseIndex];
+
+    const randomPerson = Math.floor(Math.random() * personsCount) + 1;
+
+    return { mood: randomMood, numerus: randomNumerus, person: randomPerson, tense: randomTense }
 }
 
 
@@ -311,5 +354,5 @@ module.exports =
 {
     searchUrlPattern: searchUrlPattern,
     scrapeConjugationPossibilities: scrapeConjugationPossibilities,
-    scrapeRandomConjugationForInfinitive
+    scrapeRandomConjugationForInfinitive : scrapeRandomConjugationForInfinitive
 };

@@ -12,7 +12,7 @@ app.use(express.static(__dirname + "/../client/public"));
 
 app.get("^/verb/:verb([^/]+)", (req, res) =>
 {
-    Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, req.params.verb, Dexonline.scrapeConjugationPossibilities)
+    Dictionary.getWordInformation(Dexonline.searchUrlPattern, req.params.verb, Dexonline.scrapeConjugationPossibilities)
     .then(result => res.send(result))
     .catch(error =>
     {
@@ -24,7 +24,7 @@ app.get("^/verb/:verb([^/]+)", (req, res) =>
 
 app.get("^/randomconjugation/infinitive/:infinitive([^/]+)", (req, res) =>
 {
-    Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, req.params.infinitive, Dexonline.scrapeRandomConjugation)
+    Dictionary.getWordInformation(Dexonline.searchUrlPattern, req.params.infinitive, Dexonline.scrapeRandomConjugationForInfinitive)
     .then(result => res.send(result))
     .catch(error =>
     {
@@ -61,7 +61,7 @@ app.get("^/randomword/percentile/:percentile([0-9]{1,3})", (req, res) =>
     const getResult = () =>
     {
         const randomWord = WordFrequency.getRandomWordByPercentile(Number(req.params.percentile));    
-        Dictionary.getConjugationPossibilities(Dexonline.searchUrlPattern, randomWord, Dexonline.scrapeConjugationPossibilities)
+        Dictionary.getWordInformation(Dexonline.searchUrlPattern, randomWord, Dexonline.scrapeConjugationPossibilities)
         .then(result => randomWordIterator.next(result));        
     }    
 
