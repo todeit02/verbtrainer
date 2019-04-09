@@ -64,8 +64,10 @@ TrainingScreen = (() =>
         showScreen()
         .then(() =>
         {
-            loadingAnimation = LoadingAnimation(trainingParameters.exerciseCount);
-            showLoadExerciseSpinner();
+            const loadingAnimationDom = document.querySelector("#loadExerciseAnimation");
+            const doneTextContent = capitalizeFirstLetter(appStrings["ready"].ro) + '!';
+            loadingAnimation = LoadingAnimation(loadingAnimationDom, doneTextContent, trainingParameters.exerciseCount);
+            showloadExerciseAnimation();
             updateScoreViews([]);
             exerciseQueue = HistoryQueue();
             return enqueueExercises(trainingParameters, exerciseQueue);
@@ -74,7 +76,7 @@ TrainingScreen = (() =>
         {
             $(".exercise").hide();    
             displayNextExercise(exerciseQueue);
-            hideLoadExerciseSpinner();
+            hideloadExerciseAnimation();
             showScoreViews();
             registerInputListeners(resolveScreenFinishedPromise);
         })
@@ -328,15 +330,15 @@ TrainingScreen = (() =>
     }
 
 
-    function showLoadExerciseSpinner()
+    function showloadExerciseAnimation()
     {
-        $("#loadExerciseSpinner").show();
+        $("#loadExerciseAnimation").show();
     }
 
 
-    function hideLoadExerciseSpinner()
+    function hideloadExerciseAnimation()
     {
-        $("#loadExerciseSpinner").hide();
+        $("#loadExerciseAnimation").hide();
     }
 
 

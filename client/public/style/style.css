@@ -46,9 +46,10 @@ button
 
 .exercise
 {
-    background-color: white;
     display: none;
     text-align: center;
+    margin: 0.5em;
+    background-color: white;
 }
 
 
@@ -281,18 +282,38 @@ button
 }
 
 
-#loadExerciseSpinner
+#loadExerciseAnimation
 {
-    height: 8em;
     grid-area: exercise;
     text-align: center;
     align-self: center;
 }
 
 
-#loadExerciseSpinner > *
+#loadingImageContainer
 {
-    height: 100%;
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: flex-start; 
+    height: 8em;
+    width: 9.4em;
+}
+
+
+#loadingImage
+{
+    position: relative;
+    display: inline-flex;
+    align-items: end;
+    justify-content: start; 
+}
+
+
+#loadingImage > div
+{
+    position: absolute;
+    top: 40%; left: 48%;    
+    transform: translate(-50%, -50%) rotate(-3.5deg);    
 }
 
 
@@ -320,12 +341,6 @@ input[type=range]
 input[type=range]::-webkit-slider-thumb
 {
     -webkit-appearance: none;
-}
-  
-  
-input[type=range]:focus
-{
-    /*outline: none;*/ /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
 }
   
 

@@ -106,7 +106,17 @@
         <p><input class="answer" type="text" placeholder="Meh, wrong ..." disabled /></p>
     </div>
 
-    <div class="exercise" id="loadExerciseSpinner"><img src="images/spinner.svg"></div>
+    <div class="exercise" id="loadExerciseAnimation" style="display: initial;">
+
+        <div id="loadingImageContainer">                
+            <div id="loadingImage" style="height: 8em;">
+                <img src="images/loading_image.png" style="height: 8em;">
+                <div style="font-size: 2em;">
+                    <span id="progressText">Gata!</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <span id="failedCount" class="counter">-1</span>
 
